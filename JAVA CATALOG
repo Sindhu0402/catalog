@@ -1,0 +1,72 @@
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Main {
+
+   
+    public static BigInteger decodeValue(int base, String value) {
+        return new BigInteger(value, base);
+    }
+
+  
+    public static BigInteger lagrangeInterpolation(List<BigInteger[]> points, BigInteger x) {
+        BigInteger polynomial = BigInteger.ZERO;
+
+        for (int k = 0; k < points.size(); k++) {
+            BigInteger[] point = points.get(k);
+            BigInteger x_k = point[0];
+            BigInteger y_k = point[1];
+            BigInteger term = y_k;
+
+            for (int i = 0; i < points.size(); i++) {
+                if (i != k) {
+                    BigInteger x_i = points.get(i)[0];
+                    term = term.multiply(x.subtract(x_i)).divide(x_k.subtract(x_i));
+                }
+            }
+            polynomial = polynomial.add(term);
+        }
+        return polynomial;
+    }
+
+    public static void main(String[] args) {
+        
+        String inputJson = "{ \"keys\": { \"n\": 9, \"k\": 6 }, " +
+                "\"1\": { \"base\": \"10\", \"value\": \"28735619723837\" }, " +
+                "\"2\": { \"base\": \"16\", \"value\": \"1A228867F0CA\" }, " +
+                "\"3\": { \"base\": \"12\", \"value\": \"32811A4AA0B7B\" }, " +
+                "\"4\": { \"base\": \"11\", \"value\": \"917978721331A\" }, " +
+                "\"5\": { \"base\": \"16\", \"value\": \"1A22886782E1\" }, " +
+                "\"6\": { \"base\": \"10\", \"value\": \"28735619654702\" }, " +
+                "\"7\": { \"base\": \"14\", \"value\": \"71AB5070CC4B\" }, " +
+                "\"8\": { \"base\": \"9\", \"value\": \"122662581541670\" }, " +
+                "\"9\": { \"base\": \"8\", \"value\": \"642121030037605\" } }";
+
+        
+        int n = 9; // Number of roots
+        List<BigInteger[]> points = new ArrayList<>();
+
+        
+        points.add(new BigInteger[]{BigInteger.valueOf(1), decodeValue(10, "28735619723837")});
+        points.add(new BigInteger[]{BigInteger.valueOf(2), decodeValue(16, "1A228867F0CA")});
+        points.add(new BigInteger[]{BigInteger.valueOf(3), decodeValue(12, "32811A4AA0B7B")});
+        points.add(new BigInteger[]{BigInteger.valueOf(4), decodeValue(11, "917978721331A")});
+        points.add(new BigInteger[]{BigInteger.valueOf(5), decodeValue(16, "1A22886782E1")});
+        points.add(new BigInteger[]{BigInteger.valueOf(6), decodeValue(10, "28735619654702")});
+        points.add(new BigInteger[]{BigInteger.valueOf(7), decodeValue(14, "71AB5070CC4B")});
+        points.add(new BigInteger[]{BigInteger.valueOf(8), decodeValue(9, "122662581541670")});
+        points.add(new BigInteger[]{BigInteger.valueOf(9), decodeValue(8, "642121030037605")});
+
+        // Find the polynomial's constant term c by evaluating at x = 0
+        BigInteger c = lagrangeInterpolation(points, BigInteger.ZERO);
+
+        
+        System.out.println("Constant term (c): " + c);
+    }
+}
+
+OUTPUT:
+java -cp /tmp/6tsHlAjoEL/Main
+Constant term (c): 33198405828322
+
